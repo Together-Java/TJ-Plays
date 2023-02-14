@@ -24,8 +24,8 @@ public abstract class SlashCommand extends ListenerAdapter {
 
     // Should not be implemented
     @Override
-    public void onMessageContextInteraction(MessageContextInteractionEvent event) {}
+    public final void onMessageContextInteraction(MessageContextInteractionEvent event) {}
 
     @Override
-    public void onUserContextInteraction(UserContextInteractionEvent event) {}
+    public final void onUserContextInteraction(UserContextInteractionEvent event) {}
 }
