@@ -20,8 +20,6 @@ public abstract class SlashCommand extends ListenerAdapter {
     @Override
     abstract public void onSlashCommandInteraction(SlashCommandInteractionEvent event);
 
-    abstract public String getName();
-
     // Should not be implemented
     @Override
     public final void onMessageContextInteraction(MessageContextInteractionEvent event) {}
