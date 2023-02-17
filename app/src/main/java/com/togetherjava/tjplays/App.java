@@ -7,7 +7,7 @@ import com.togetherjava.tjplays.listeners.commands.SlashCommand;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 public final class App {
     public static void main(String[] args) {
@@ -16,12 +16,10 @@ public final class App {
         List<SlashCommand> commands = List.of(new PingCommand());
         commands.forEach(command -> jda.addEventListener(command));
 
-        CommandListUpdateAction commandUpdateList = jda.updateCommands();
-
-        commands.stream()
+        List<SlashCommandData> commandDatas = commands.stream()
             .map(SlashCommand::getData)
-            .forEach(commandUpdateList::addCommands);
+            .toList();
 
-        commandUpdateList.queue();
+        jda.updateCommands().addCommands(commandDatas).queue();
     }
 }
