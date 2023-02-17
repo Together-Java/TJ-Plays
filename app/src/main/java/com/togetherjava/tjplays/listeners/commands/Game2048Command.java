@@ -33,8 +33,12 @@ public final class Game2048Command extends SlashCommand {
 
         MessageCreateData messageData = new MessageCreateBuilder()
             .addFiles(FileUpload.fromData(gameRenderer.getData(), "frame." + Renderer2048.IMAGE_FORMAT))
-            .addActionRow(Button.primary(" ", "i").asDisabled(), Button.primary("2048 up", Emoji.fromUnicode("⬆️")), Button.primary("i", "i").asDisabled())
-            .addActionRow(Button.primary("2048 left", Emoji.fromUnicode("⬅️")), Button.primary("2048 down", Emoji.fromUnicode("⬇️")),Button.primary("2048 right", Emoji.fromUnicode("➡️")))
+            .addActionRow(Button.primary(" ", "i").asDisabled(),
+                    Button.primary(COMMAND_NAME + " up", Emoji.fromUnicode("⬆️")),
+                    Button.primary("i", "i").asDisabled())
+            .addActionRow(Button.primary(COMMAND_NAME + " left", Emoji.fromUnicode("⬅️")),
+                    Button.primary(COMMAND_NAME + " down", Emoji.fromUnicode("⬇️")),
+                    Button.primary(COMMAND_NAME + " right", Emoji.fromUnicode("➡️")))
             .build();
 
         event.reply("Game Started").queue();
@@ -43,6 +47,8 @@ public final class Game2048Command extends SlashCommand {
 
     @Override
     public void onButtonInteraction(ButtonInteractionEvent event) {
+        if (!event.getButton().getId().startsWith(COMMAND_NAME)) return;
+
         Move move = null;
 
         if (event.getButton().getId().contains("up")) move = Move.UP;
