@@ -15,6 +15,8 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
+import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageEditData;
 
 public final class Game2048Command extends SlashCommand {
     private static final String COMMAND_NAME = "2048";
@@ -32,6 +34,7 @@ public final class Game2048Command extends SlashCommand {
         Renderer2048 gameRenderer = new Renderer2048(game);
 
         MessageCreateData messageData = new MessageCreateBuilder()
+            .addContent(scoreMessage(game))
             .addFiles(FileUpload.fromData(gameRenderer.getData(), "frame." + Renderer2048.IMAGE_FORMAT))
             .addActionRow(Button.primary(" ", "i").asDisabled(),
                     Button.primary(COMMAND_NAME + " up", Emoji.fromUnicode("⬆️")),
@@ -41,8 +44,8 @@ public final class Game2048Command extends SlashCommand {
                     Button.primary(COMMAND_NAME + " right", Emoji.fromUnicode("➡️")))
             .build();
 
-        event.reply("Game Started").queue();
-        event.getChannel().sendMessage(messageData).queue(message -> sessions.put(message.getId(), gameRenderer));
+        event.reply(messageData)
+            .queue(hook -> hook.retrieveOriginal().queue(message -> sessions.put(message.getId(), gameRenderer)));
     }
 
     @Override
@@ -57,8 +60,17 @@ public final class Game2048Command extends SlashCommand {
         else if (event.getButton().getId().contains("right")) move = Move.RIGHT;
 
         Renderer2048 gameRenderer = sessions.get(event.getMessageId());
-
         gameRenderer.getGame().move(move);
-        event.editMessageAttachments(FileUpload.fromData(gameRenderer.getData(), "frame." + Renderer2048.IMAGE_FORMAT)).queue();
+
+        MessageEditData messageEditData = new MessageEditBuilder()
+            .setContent(scoreMessage(gameRenderer.getGame()))
+            .setAttachments(FileUpload.fromData(gameRenderer.getData(), "frame." + Renderer2048.IMAGE_FORMAT))
+            .build();
+
+        event.editMessage(messageEditData).queue();
+    }
+
+    private String scoreMessage(Game2048 game) {
+        return "__**Score:**__ " + game.getScore();
     }
 }
