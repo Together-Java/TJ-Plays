@@ -62,7 +62,7 @@ public final class Game2048 {
 
             int[] a = new int[]{ k, j };
             int[] b = new int[]{ k + 1, j };
-            mergeOrSwap(a, b, board[i][j]);
+            mergeOrSwap(a, b);
         }
 
         return valid;
@@ -77,11 +77,10 @@ public final class Game2048 {
 
             int[] a = new int[]{ k, j };
             int[] b = new int[]{ k - 1, j };
-            mergeOrSwap(a, b, board[i][j]);
-
-            // if (board[k - 1][j] != 0)
-                // for (int l = k - 1; l >= 0; l--) moveDown(l, j);
+            mergeOrSwap(a, b);
         }
+        if (i > 0 && board[i - 1][j] != 0)
+            for (int l = i - 1; l >= 0; l--) moveDown(l, j);
 
         return valid;
     }
@@ -95,7 +94,7 @@ public final class Game2048 {
 
             int[] a = new int[]{ i, k };
             int[] b = new int[]{ i, k + 1 };
-            mergeOrSwap(a, b, board[i][j]);
+            mergeOrSwap(a, b);
         }
 
         return valid;
@@ -110,18 +109,18 @@ public final class Game2048 {
 
             int[] a = new int[]{ i, k };
             int[] b = new int[]{ i, k - 1 };
-            mergeOrSwap(a, b, board[i][j]);
-
-            // if (board[k - 1][j] != 0)
-                // for (int l = k - 1; l >= 0; l--) moveDown(i, k);
+            mergeOrSwap(a, b);
         }
+
+        if (j > 0 && board[i][j - 1] != 0)
+            for (int l = j - 1; l >= 0; l--) moveRight(i, l);
 
         return valid;
     }
 
-    private void mergeOrSwap(int[] a, int[] b, int initialValue) {
-        if (board[a[0]][a[1]] == board[b[0]][b[1]] && board[a[0]][a[1]] == initialValue) mergeBlocks(a, b);
-        else if(board[b[0]][b[1]] == 0) swapBlocks(a, b);
+    private void mergeOrSwap(int[] a, int[] b) {
+        if (board[a[0]][a[1]] == board[b[0]][b[1]]) mergeBlocks(a, b);
+        else swapBlocks(a, b);
     }
 
     private void mergeBlocks(int[] a, int[] b) {
@@ -129,11 +128,11 @@ public final class Game2048 {
         board[b[0]][b[1]] = 0;
         score += board[a[0]][a[1]];
     }
-    
+
     private void swapBlocks(int[] a, int[] b) {
-        board[b[0]][b[1]] = board[a[0]][a[1]];
-        board[a[0]][a[1]] = 0;
-    }
+        board[a[0]][a[1]] = board[b[0]][b[1]];
+        board[b[0]][b[1]] = 0;
+    }   
 
     private void spawnNewBlock() {
         List<int[]> emptyBlocks = new ArrayList<>();
@@ -162,10 +161,10 @@ public final class Game2048 {
                 if (board[i][j] == 0) hasEmptyBlocks = true;
 
                 if (!hasEmptyBlocks && !hasPossibleMove) {
-                    if (i > 0) hasPossibleMove = board[i][j] == board[i - 1][j];
-                    if (i < ROWS - 1) hasPossibleMove = board[i][j] == board[i + 1][j];
-                    if (j > 0) hasPossibleMove = board[i][j] == board[i][j - 1];
-                    if (j < COLUMNS - 1) hasPossibleMove = board[i][j] == board[i][j + 1];
+                    if (i > 0 && board[i][j] == board[i - 1][j]) hasPossibleMove = true;
+                    if (i < ROWS - 1 && board[i][j] == board[i + 1][j]) hasPossibleMove = true;
+                    if (j > 0 && board[i][j] == board[i][j - 1]) hasPossibleMove = true;
+                    if (j < COLUMNS - 1 && board[i][j] == board[i][j + 1]) hasPossibleMove = true;
                 }
             }
         }
