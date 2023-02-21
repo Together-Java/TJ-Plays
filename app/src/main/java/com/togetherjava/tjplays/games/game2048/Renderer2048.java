@@ -1,16 +1,16 @@
 package com.togetherjava.tjplays.games.game2048;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.imageio.ImageIO;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.FontMetrics;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 public final class Renderer2048 {
     public static final String IMAGE_FORMAT = "png";
@@ -19,7 +19,7 @@ public final class Renderer2048 {
     private static final int PADDING = 20;
     private static Map<Integer, Color> tileColorMap = new HashMap<>();
 
-    private final Game2048 game;
+    private Game2048 game;
     private final BufferedImage image;
 
     static {
@@ -50,6 +50,10 @@ public final class Renderer2048 {
         return game;
     }
 
+    public void setGame(Game2048 game) {
+        this.game = game;
+    }
+
     public byte[] getData() {
         Graphics2D graphics = image.createGraphics();
 
@@ -68,12 +72,36 @@ public final class Renderer2048 {
                 graphics.fillRect(x, y, TILE_SIDE, TILE_SIDE);
 
                 if (tileValue == 0) continue;
-                graphics.setFont(new Font("Arial", Font.BOLD, 60));
-                graphics.setColor(Color.BLACK);
-                graphics.drawString(String.valueOf(tileValue), x, y + TILE_SIDE);
+
+                graphics.setColor(tileValue < 8 ? new Color(130, 115, 100) : Color.WHITE);
+                graphics.setFont(new Font("Arial", Font.BOLD, tileValue > 1000 ? 80 : 100));
+                FontMetrics tileMetrics = graphics.getFontMetrics();
+                String tileText = String.valueOf(tileValue);
+                graphics.drawString(tileText,
+                        x + ((TILE_SIDE - tileMetrics.stringWidth(tileText)) / 2),
+                        y + ((TILE_SIDE - tileMetrics.getHeight()) / 2) + tileMetrics.getAscent());
             }
         }
 
+        if (game.getState() == GameState.ONGOING) return getByteArray();
+
+        // End screen
+        graphics.setColor(new Color(190, 170, 160, 200));
+        graphics.fillRect(0, 0, image.getWidth(), image.getHeight());
+
+        String text = switch (game.getState()) {
+            case LOST -> "Game Over";
+            case WON -> "You Won";
+            default -> "";
+        };
+
+        graphics.setColor(Color.BLACK);
+        graphics.setFont(new Font("Arial", Font.BOLD, 120));
+        FontMetrics metrics = graphics.getFontMetrics();
+        graphics.drawString(text,
+                (image.getWidth() - metrics.stringWidth(text)) / 2,
+                (image.getHeight() - metrics.getHeight()) / 2 + metrics.getAscent());
+        
         return getByteArray();
     }
 
