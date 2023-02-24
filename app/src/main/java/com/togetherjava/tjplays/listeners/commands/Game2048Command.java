@@ -2,6 +2,7 @@ package com.togetherjava.tjplays.listeners.commands;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import com.togetherjava.tjplays.games.game2048.Game2048;
 import com.togetherjava.tjplays.games.game2048.GameState;
@@ -33,7 +34,10 @@ public final class Game2048Command extends SlashCommand {
         Renderer2048 gameRenderer = new Renderer2048(new Game2048());
 
         event.reply(gameMessage(gameRenderer))
-            .queue(hook -> hook.retrieveOriginal().queue(message -> sessions.put(message.getId(), gameRenderer)));
+            .queue(hook -> {
+                hook.retrieveOriginal().queue(message -> sessions.put(message.getId(), gameRenderer));
+                hook.retrieveOriginal().queueAfter(10, TimeUnit.HOURS, message -> sessions.remove(message.getId()));
+            });
     }
 
     @Override
