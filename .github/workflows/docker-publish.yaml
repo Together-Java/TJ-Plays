@@ -6,7 +6,7 @@ on:
       - 'master'
 
 env:
-  JAVA_VERSION: 18
+  JAVA_VERSION: 19
 
 jobs:
   docker:
