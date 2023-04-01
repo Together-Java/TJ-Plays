@@ -34,21 +34,22 @@ public final class Game2048Command extends SlashCommand {
         Renderer2048 gameRenderer = new Renderer2048(new Game2048());
 
         event.reply(gameMessage(gameRenderer, event.getUser().getId()))
-                .queue(hook -> {
-                    hook.retrieveOriginal().queue(message -> sessions.put(message.getId(), gameRenderer));
-                    hook.retrieveOriginal().queueAfter(10, TimeUnit.HOURS, message -> sessions.remove(message.getId()));
-                });
+            .queue(hook -> {
+                hook.retrieveOriginal().queue(message -> sessions.put(message.getId(), gameRenderer));
+                hook.retrieveOriginal().queueAfter(10, TimeUnit.HOURS, message -> sessions.remove(message.getId()));
+            });
     }
 
     @Override
     public void onButtonInteraction(ButtonInteractionEvent event) {
         String buttonId = event.getButton().getId();
-        if (!buttonId.startsWith(COMMAND_NAME))
-            return;
+        if (!buttonId.startsWith(COMMAND_NAME)) return;
+
         if (!buttonId.contains(event.getUser().getId())) {
             event.reply("You can't interact with this game.").setEphemeral(true).queue();
             return;
         }
+
         if (buttonId.contains("reset"))
             sessions.get(event.getMessageId()).setGame(new Game2048());
         else if (buttonId.contains("delete")) {
@@ -59,14 +60,10 @@ public final class Game2048Command extends SlashCommand {
 
         Move move = null;
 
-        if (buttonId.contains("up"))
-            move = Move.UP;
-        else if (buttonId.contains("down"))
-            move = Move.DOWN;
-        else if (buttonId.contains("left"))
-            move = Move.LEFT;
-        else if (buttonId.contains("right"))
-            move = Move.RIGHT;
+        if (buttonId.contains("up")) move = Move.UP;
+        else if (buttonId.contains("down")) move = Move.DOWN;
+        else if (buttonId.contains("left")) move = Move.LEFT;
+        else if (buttonId.contains("right")) move = Move.RIGHT;
 
         Renderer2048 gameRenderer = sessions.get(event.getMessageId());
         if (move != null)
@@ -92,11 +89,11 @@ public final class Game2048Command extends SlashCommand {
         }
 
         return new MessageCreateBuilder()
-                .setContent(scoreMessage(gameRenderer.getGame()))
-                .addFiles(FileUpload.fromData(gameRenderer.getData(), "frame." + Renderer2048.IMAGE_FORMAT))
-                .addActionRow(resetButton, upButton, deleteButton)
-                .addActionRow(leftButton, downButton, rightButton)
-                .build();
+            .setContent(scoreMessage(gameRenderer.getGame()))
+            .addFiles(FileUpload.fromData(gameRenderer.getData(), "frame." + Renderer2048.IMAGE_FORMAT))
+            .addActionRow(resetButton, upButton, deleteButton)
+            .addActionRow(leftButton, downButton, rightButton)
+            .build();
     }
 
     private String scoreMessage(Game2048 game) {
