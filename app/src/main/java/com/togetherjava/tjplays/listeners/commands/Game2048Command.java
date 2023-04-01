@@ -20,6 +20,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.dv8tion.jda.api.utils.messages.MessageEditData;
 
 public final class Game2048Command extends SlashCommand {
+    private String initialUser = new String();
     private static final String COMMAND_NAME = "2048";
     private Map<String, Renderer2048> sessions = new HashMap<>();
 
@@ -30,7 +31,7 @@ public final class Game2048Command extends SlashCommand {
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         if (!event.getName().equals(COMMAND_NAME)) return;
-
+        initialUser = event.getUser().getId();
         Renderer2048 gameRenderer = new Renderer2048(new Game2048());
 
         event.reply(gameMessage(gameRenderer))
@@ -44,7 +45,10 @@ public final class Game2048Command extends SlashCommand {
     public void onButtonInteraction(ButtonInteractionEvent event) {
         String buttonId = event.getButton().getId();
         if (!buttonId.startsWith(COMMAND_NAME)) return;
-
+        if (!event.getUser().getId().equals(initialUser)) {
+            event.reply(event.getUser().getAsMention()+" you can't interact with this game.").queue(); 
+            return;
+        }   
         if (buttonId.contains("reset")) sessions.get(event.getMessageId()).setGame(new Game2048());
         else if (buttonId.contains("delete")) {
             sessions.remove(event.getMessageId());
