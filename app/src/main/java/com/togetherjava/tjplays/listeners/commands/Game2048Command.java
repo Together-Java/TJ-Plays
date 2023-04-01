@@ -30,10 +30,9 @@ public final class Game2048Command extends SlashCommand {
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         if (!event.getName().equals(COMMAND_NAME)) return;
-
         Renderer2048 gameRenderer = new Renderer2048(new Game2048());
 
-        event.reply(gameMessage(gameRenderer))
+        event.reply(gameMessage(gameRenderer, event.getUser().getId()))
             .queue(hook -> {
                 hook.retrieveOriginal().queue(message -> sessions.put(message.getId(), gameRenderer));
                 hook.retrieveOriginal().queueAfter(10, TimeUnit.HOURS, message -> sessions.remove(message.getId()));
@@ -45,7 +44,13 @@ public final class Game2048Command extends SlashCommand {
         String buttonId = event.getButton().getId();
         if (!buttonId.startsWith(COMMAND_NAME)) return;
 
-        if (buttonId.contains("reset")) sessions.get(event.getMessageId()).setGame(new Game2048());
+        if (!buttonId.contains(event.getUser().getId())) {
+            event.reply("You can't interact with this game.").setEphemeral(true).queue();
+            return;
+        }
+
+        if (buttonId.contains("reset"))
+            sessions.get(event.getMessageId()).setGame(new Game2048());
         else if (buttonId.contains("delete")) {
             sessions.remove(event.getMessageId());
             event.getMessage().delete().queue();
@@ -60,19 +65,20 @@ public final class Game2048Command extends SlashCommand {
         else if (buttonId.contains("right")) move = Move.RIGHT;
 
         Renderer2048 gameRenderer = sessions.get(event.getMessageId());
-        if (move != null) gameRenderer.getGame().move(move);
+        if (move != null)
+            gameRenderer.getGame().move(move);
 
-        event.editMessage(MessageEditData.fromCreateData(gameMessage(gameRenderer))).queue();
+        event.editMessage(MessageEditData.fromCreateData(gameMessage(gameRenderer, event.getUser().getId()))).queue();
     }
 
-    private MessageCreateData gameMessage(Renderer2048 gameRenderer) {
-        Button resetButton = Button.success(COMMAND_NAME + " reset", Emoji.fromUnicode("🔃"));
-        Button upButton = Button.primary(COMMAND_NAME + " up", Emoji.fromUnicode("⬆️"));
-        Button deleteButton = Button.danger(COMMAND_NAME + " delete", Emoji.fromUnicode("🗑️"));
+    private MessageCreateData gameMessage(Renderer2048 gameRenderer, String playerId) {
+        Button resetButton = Button.success(COMMAND_NAME + " " + playerId + " reset", Emoji.fromUnicode("🔃"));
+        Button upButton = Button.primary(COMMAND_NAME + " " + playerId + " up", Emoji.fromUnicode("⬆️"));
+        Button deleteButton = Button.danger(COMMAND_NAME + " " + playerId + " delete", Emoji.fromUnicode("🗑️"));
 
-        Button leftButton = Button.primary(COMMAND_NAME + " left", Emoji.fromUnicode("⬅️"));
-        Button downButton = Button.primary(COMMAND_NAME + " down", Emoji.fromUnicode("⬇️"));
-        Button rightButton = Button.primary(COMMAND_NAME + " right", Emoji.fromUnicode("➡️"));
+        Button leftButton = Button.primary(COMMAND_NAME + " " + playerId + " left", Emoji.fromUnicode("⬅️"));
+        Button downButton = Button.primary(COMMAND_NAME + " " + playerId + " down", Emoji.fromUnicode("⬇️"));
+        Button rightButton = Button.primary(COMMAND_NAME + " " + playerId + " right", Emoji.fromUnicode("➡️"));
 
         if (gameRenderer.getGame().getState() != GameState.ONGOING) {
             upButton = upButton.asDisabled();
