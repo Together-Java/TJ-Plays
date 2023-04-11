@@ -18,10 +18,12 @@ public final class Renderer2048 {
     private static final int TILE_SIDE = 200;
     private static final int PADDING = 20;
     private static Map<Integer, Color> tileColorMap = new HashMap<>();
+    private static int fontSize = 100; //set the font size here
 
     private Game2048 game;
     private final BufferedImage image;
 
+    //runs when the class is firstly loaded for one time
     static {
         tileColorMap.put(0, new Color(205, 190, 180));
         tileColorMap.put(2, new Color(240, 230, 220));
@@ -96,7 +98,7 @@ public final class Renderer2048 {
         };
 
         graphics.setColor(Color.BLACK);
-        graphics.setFont(new Font("Arial", Font.BOLD, 120));
+        graphics.setFont(new Font("Arial", Font.BOLD, fontSize));
         FontMetrics metrics = graphics.getFontMetrics();
         graphics.drawString(text,
                 (image.getWidth() - metrics.stringWidth(text)) / 2,
