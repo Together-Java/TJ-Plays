@@ -18,7 +18,9 @@ public final class Renderer2048 {
     private static final int TILE_SIDE = 200;
     private static final int PADDING = 20;
     private static Map<Integer, Color> tileColorMap = new HashMap<>();
-    private static int fontSize = 100; //set the font size here
+    private static int defaultFontSize=100; // default size
+    private static int scale=8; // change  the scale : the more is bigger (the bigger is the difference in font-size)
+    
 
     private Game2048 game;
     private final BufferedImage image;
@@ -56,6 +58,11 @@ public final class Renderer2048 {
         this.game = game;
     }
 
+    private static int getFontSizeForTileValue(int tileValue){
+        //basially the more the number is big the more the font-size is little
+        return defaultFontSize - String.valueOf(tileValue).length() * scale;
+    }
+
     public byte[] getData() {
         Graphics2D graphics = image.createGraphics();
 
@@ -76,7 +83,7 @@ public final class Renderer2048 {
                 if (tileValue == 0) continue;
 
                 graphics.setColor(tileValue < 8 ? new Color(130, 115, 100) : Color.WHITE);
-                graphics.setFont(new Font("Arial", Font.BOLD, tileValue > 1000 ? 80 : 100));
+                graphics.setFont(new Font("Arial", Font.BOLD, getFontSizeForTileValue(tileValue)));
                 FontMetrics tileMetrics = graphics.getFontMetrics();
                 String tileText = String.valueOf(tileValue);
                 graphics.drawString(tileText,
@@ -98,7 +105,7 @@ public final class Renderer2048 {
         };
 
         graphics.setColor(Color.BLACK);
-        graphics.setFont(new Font("Arial", Font.BOLD, fontSize));
+        graphics.setFont(new Font("Arial", Font.BOLD, defaultFontSize));
         FontMetrics metrics = graphics.getFontMetrics();
         graphics.drawString(text,
                 (image.getWidth() - metrics.stringWidth(text)) / 2,
