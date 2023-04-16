@@ -18,14 +18,13 @@ public final class Renderer2048 {
     private static final int TILE_SIDE = 200;
     private static final int PADDING = 20;
     private static Map<Integer, Color> tileColorMap = new HashMap<>();
-    private static int defaultFontSize=120; // default size
-    private static int scale=8; // change  the scale : the more is bigger (the bigger is the difference in font-size)
+    private static int defaultFontSize=120;
+    private static int scale=8;
     
 
     private Game2048 game;
     private final BufferedImage image;
 
-    //runs when the class is firstly loaded for one time
     static {
         tileColorMap.put(0, new Color(205, 190, 180));
         tileColorMap.put(2, new Color(240, 230, 220));
@@ -59,7 +58,6 @@ public final class Renderer2048 {
     }
 
     private static int getFontSizeForTileValue(int tileValue){
-        //basially the more the number is big the more the font-size is little
         return defaultFontSize - String.valueOf(tileValue).length() * scale;
     }
 
