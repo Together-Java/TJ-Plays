@@ -18,8 +18,8 @@ public final class Renderer2048 {
     private static final int TILE_SIDE = 200;
     private static final int PADDING = 20;
     private static Map<Integer, Color> tileColorMap = new HashMap<>();
-    private static int defaultFontSize=120;
-    private static int scale=8;
+    private static final int defaultFontSize=120;
+    private static final int scale=8;
     
 
     private Game2048 game;
