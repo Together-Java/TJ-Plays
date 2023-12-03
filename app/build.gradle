@@ -1,11 +1,41 @@
 plugins {
     id 'java'
     id 'application'
+    id 'com.google.cloud.tools.jib' version '3.3.0'
     id 'com.github.johnrengelman.shadow' version '8.0.0'
 }
 
 repositories {
     mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(19)
+    }
+}
+
+var outputImage = 'togetherjava.org:5001/togetherjava/tjplays:master' ?: 'latest'
+
+jib {
+    from.image = 'eclipse-temurin:19'
+    to {
+        image = outputImage
+        auth {
+            username = System.getenv('ORG_REGISTRY_USER') ?: ''
+            password = System.getenv('ORG_REGISTRY_PASSWORD') ?: ''
+        }
+    }
+    container {
+        mainClass = 'com.togetherjava.tjplays.App'
+        setCreationTime(java.time.Instant.now().toString())
+    }
+}
+
+shadowJar {
+    archiveBaseName.set('TJ-Plays')
+    archiveClassifier.set('')
+    archiveVersion.set('')
 }
 
 dependencies {
