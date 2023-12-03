@@ -17,6 +17,8 @@ public final class Renderer2048 {
 
     private static final int TILE_SIDE = 200;
     private static final int PADDING = 20;
+    private static final int DEFAULT_FONT_SIZE = 120;
+    private static final int SCALE = 8;
     private static Map<Integer, Color> tileColorMap = new HashMap<>();
 
     private Game2048 game;
@@ -54,6 +56,10 @@ public final class Renderer2048 {
         this.game = game;
     }
 
+    private static int getFontSizeForTileValue(int tileValue) {
+        return DEFAULT_FONT_SIZE - String.valueOf(tileValue).length() * SCALE;
+    }
+
     public byte[] getData() {
         Graphics2D graphics = image.createGraphics();
 
@@ -74,7 +80,7 @@ public final class Renderer2048 {
                 if (tileValue == 0) continue;
 
                 graphics.setColor(tileValue < 8 ? new Color(130, 115, 100) : Color.WHITE);
-                graphics.setFont(new Font("Arial", Font.BOLD, tileValue > 1000 ? 80 : 100));
+                graphics.setFont(new Font("Arial", Font.BOLD, getFontSizeForTileValue(tileValue)));
                 FontMetrics tileMetrics = graphics.getFontMetrics();
                 String tileText = String.valueOf(tileValue);
                 graphics.drawString(tileText,
@@ -96,7 +102,7 @@ public final class Renderer2048 {
         };
 
         graphics.setColor(Color.BLACK);
-        graphics.setFont(new Font("Arial", Font.BOLD, 120));
+        graphics.setFont(new Font("Arial", Font.BOLD, DEFAULT_FONT_SIZE));
         FontMetrics metrics = graphics.getFontMetrics();
         graphics.drawString(text,
                 (image.getWidth() - metrics.stringWidth(text)) / 2,
