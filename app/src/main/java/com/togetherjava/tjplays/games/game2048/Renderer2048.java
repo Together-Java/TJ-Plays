@@ -17,10 +17,9 @@ public final class Renderer2048 {
 
     private static final int TILE_SIDE = 200;
     private static final int PADDING = 20;
+    private static final int DEFAULT_FONT_SIZE = 120;
+    private static final int SCALE = 8;
     private static Map<Integer, Color> tileColorMap = new HashMap<>();
-    private static final int defaultFontSize=120;
-    private static final int scale=8;
-    
 
     private Game2048 game;
     private final BufferedImage image;
@@ -57,8 +56,8 @@ public final class Renderer2048 {
         this.game = game;
     }
 
-    private static int getFontSizeForTileValue(int tileValue){
-        return defaultFontSize - String.valueOf(tileValue).length() * scale;
+    private static int getFontSizeForTileValue(int tileValue) {
+        return DEFAULT_FONT_SIZE - String.valueOf(tileValue).length() * SCALE;
     }
 
     public byte[] getData() {
