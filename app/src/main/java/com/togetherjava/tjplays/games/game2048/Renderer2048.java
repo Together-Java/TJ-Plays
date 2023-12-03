@@ -102,7 +102,7 @@ public final class Renderer2048 {
         };
 
         graphics.setColor(Color.BLACK);
-        graphics.setFont(new Font("Arial", Font.BOLD, defaultFontSize));
+        graphics.setFont(new Font("Arial", Font.BOLD, DEFAULT_FONT_SIZE));
         FontMetrics metrics = graphics.getFontMetrics();
         graphics.drawString(text,
                 (image.getWidth() - metrics.stringWidth(text)) / 2,
