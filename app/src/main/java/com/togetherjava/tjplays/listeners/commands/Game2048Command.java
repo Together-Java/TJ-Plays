@@ -29,7 +29,6 @@ public final class Game2048Command extends SlashCommand {
 
     @Override
     public void onSlashCommand(SlashCommandInteractionEvent event) {
-        if (!event.getName().equals(COMMAND_NAME)) return;
         Renderer2048 gameRenderer = new Renderer2048(new Game2048());
 
         event.reply(gameMessage(gameRenderer, event.getUser().getId()))
