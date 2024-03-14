@@ -14,7 +14,9 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 public final class Bot {
     public static void main(String[] args) throws IOException {
         Properties properties = new Properties();
-        properties.load(new FileInputStream(Bot.class.getResource("/bot-config.properties").getPath()));
+
+        String configPath = args.length == 0 ? "bot-config.properties" : args[0];
+        properties.load(new FileInputStream(configPath));
 
         String token = properties.getProperty("BOT_TOKEN");
         JDA jda = JDABuilder.createDefault(token).build();
