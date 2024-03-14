@@ -21,6 +21,13 @@ import net.dv8tion.jda.api.utils.messages.MessageEditData;
 
 public final class Game2048Command extends SlashCommand {
     private static final String COMMAND_NAME = "2048";
+    private static final Emoji RESET_EMOJI = Emoji.fromUnicode("🔃");
+    private static final Emoji UP_EMOJI = Emoji.fromUnicode("⬆️");
+    private static final Emoji DELETE_EMOJI = Emoji.fromUnicode("🗑️");
+    private static final Emoji LEFT_EMOJI = Emoji.fromUnicode("⬅️");
+    private static final Emoji DOWN_EMOJI = Emoji.fromUnicode("⬇️");
+    private static final Emoji RIGHT_EMOJI = Emoji.fromUnicode("➡️");
+
     private Map<String, Renderer2048> sessions = new HashMap<>();
 
     public Game2048Command() {
@@ -71,13 +78,13 @@ public final class Game2048Command extends SlashCommand {
     }
 
     private MessageCreateData gameMessage(Renderer2048 gameRenderer, String playerId) {
-        Button resetButton = Button.success(COMMAND_NAME + " " + playerId + " reset", Emoji.fromUnicode("🔃"));
-        Button upButton = Button.primary(COMMAND_NAME + " " + playerId + " up", Emoji.fromUnicode("⬆️"));
-        Button deleteButton = Button.danger(COMMAND_NAME + " " + playerId + " delete", Emoji.fromUnicode("🗑️"));
+        Button resetButton = Button.success(COMMAND_NAME + " " + playerId + " reset", RESET_EMOJI);
+        Button upButton = Button.primary(COMMAND_NAME + " " + playerId + " up", UP_EMOJI);
+        Button deleteButton = Button.danger(COMMAND_NAME + " " + playerId + " delete", DELETE_EMOJI);
 
-        Button leftButton = Button.primary(COMMAND_NAME + " " + playerId + " left", Emoji.fromUnicode("⬅️"));
-        Button downButton = Button.primary(COMMAND_NAME + " " + playerId + " down", Emoji.fromUnicode("⬇️"));
-        Button rightButton = Button.primary(COMMAND_NAME + " " + playerId + " right", Emoji.fromUnicode("➡️"));
+        Button leftButton = Button.primary(COMMAND_NAME + " " + playerId + " left", LEFT_EMOJI);
+        Button downButton = Button.primary(COMMAND_NAME + " " + playerId + " down", DOWN_EMOJI);
+        Button rightButton = Button.primary(COMMAND_NAME + " " + playerId + " right", RIGHT_EMOJI);
 
         if (gameRenderer.getGame().getState() != GameState.ONGOING) {
             upButton = upButton.asDisabled();
