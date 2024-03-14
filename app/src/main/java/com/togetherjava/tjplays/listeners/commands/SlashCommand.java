@@ -17,8 +17,12 @@ public abstract class SlashCommand extends ListenerAdapter {
         return data;
     }
 
+    public abstract void onSlashCommand(SlashCommandInteractionEvent event);
+
     @Override
-    abstract public void onSlashCommandInteraction(SlashCommandInteractionEvent event);
+    public final void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+        if (event.getName().equals(data.getName())) onSlashCommand(event);
+    }
 
     // Should not be implemented
     @Override

@@ -45,7 +45,7 @@ dependencies {
 }
 
 application {
-    mainClass = 'com.togetherjava.tjplays.App'
+    mainClass = 'com.togetherjava.tjplays.Bot'
 }
 
 tasks.named('test') {

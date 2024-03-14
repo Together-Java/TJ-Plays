@@ -44,5 +44,5 @@ nbdist/
 # Ignore Gradle build output directory
 build
 
-### Vim ###
-.vim/
+# Credentials
+bot-config.properties
