@@ -23,7 +23,7 @@ public final class Bot {
     private static Properties readProperties(String... args) throws IOException {
         Properties properties = new Properties();
 
-        String configPath = args.length == 0 ? "bot-config.properties" : args[0];
+        String configPath = args.length == 0 ? "app/src/bot-config.properties" : args[0];
         properties.load(new FileInputStream(configPath));
 
         return properties;
@@ -47,7 +47,9 @@ public final class Bot {
     private static List<SlashCommand> getCommands() {
         return List.of(
             new PingCommand(),
+            new GuessLanguageCommand(),
             new Game2048Command()
+
         );
     }
 }
