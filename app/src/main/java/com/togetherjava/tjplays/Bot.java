@@ -13,13 +13,24 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 public final class Bot {
     public static void main(String[] args) throws IOException {
+        Properties properties = readProperties(args);
+
+        String botToken = properties.getProperty("BOT_TOKEN");
+
+        createJDA(botToken);
+    }
+
+    private static Properties readProperties(String... args) throws IOException {
         Properties properties = new Properties();
 
         String configPath = args.length == 0 ? "bot-config.properties" : args[0];
         properties.load(new FileInputStream(configPath));
 
-        String token = properties.getProperty("BOT_TOKEN");
-        JDA jda = JDABuilder.createDefault(token).build();
+        return properties;
+    }
+
+    private static JDA createJDA(String botToken) {
+        JDA jda = JDABuilder.createDefault(botToken).build();
 
         List<SlashCommand> commands = getCommands();
         commands.forEach(command -> jda.addEventListener(command));
@@ -29,6 +40,8 @@ public final class Bot {
             .toList();
 
         jda.updateCommands().addCommands(commandDatas).queue();
+
+        return jda;
     }
 
     private static List<SlashCommand> getCommands() {
