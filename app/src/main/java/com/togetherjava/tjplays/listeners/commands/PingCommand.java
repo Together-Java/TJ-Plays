@@ -11,9 +11,7 @@ public final class PingCommand extends SlashCommand {
     }
 
     @Override
-    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        if (!event.getName().equals(COMMAND_NAME)) return;
-
+    public void onSlashCommand(SlashCommandInteractionEvent event) {
         event.reply("Pong!").queue();
     }
 }
