@@ -39,7 +39,7 @@ shadowJar {
 }
 
 dependencies {
-    implementation 'net.dv8tion:JDA:5.0.0-alpha.21'
+    implementation 'net.dv8tion:JDA:5.0.0-beta.21'
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
 }
