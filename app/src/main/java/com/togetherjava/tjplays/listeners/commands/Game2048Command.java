@@ -21,12 +21,12 @@ import net.dv8tion.jda.api.utils.messages.MessageEditData;
 
 public final class Game2048Command extends SlashCommand {
     private static final String COMMAND_NAME = "2048";
-    private static final Emoji RESET_EMOJI = Emoji.fromUnicode("🔃");
-    private static final Emoji UP_EMOJI = Emoji.fromUnicode("⬆️");
-    private static final Emoji DELETE_EMOJI = Emoji.fromUnicode("🗑️");
-    private static final Emoji LEFT_EMOJI = Emoji.fromUnicode("⬅️");
-    private static final Emoji DOWN_EMOJI = Emoji.fromUnicode("⬇️");
-    private static final Emoji RIGHT_EMOJI = Emoji.fromUnicode("➡️");
+    private static final Emoji RESET_EMOJI = Emoji.fromUnicode("\uD83D\uDD03");
+    private static final Emoji UP_EMOJI = Emoji.fromUnicode("\u2B06\uFE0F");
+    private static final Emoji DELETE_EMOJI = Emoji.fromUnicode("\uD83D\uDDD1");
+    private static final Emoji LEFT_EMOJI = Emoji.fromUnicode("\u2B05\uFE0F");
+    private static final Emoji DOWN_EMOJI = Emoji.fromUnicode("\u2B07\uFE0F");
+    private static final Emoji RIGHT_EMOJI = Emoji.fromUnicode("\u27A1\uFE0F");
 
     private Map<String, Renderer2048> sessions = new HashMap<>();
 
