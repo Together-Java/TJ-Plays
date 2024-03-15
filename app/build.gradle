@@ -11,14 +11,14 @@ repositories {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(19)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
 var outputImage = 'togetherjava.org:5001/togetherjava/tjplays:master' ?: 'latest'
 
 jib {
-    from.image = 'eclipse-temurin:19'
+    from.image = 'eclipse-temurin:21'
     to {
         image = outputImage
         auth {
