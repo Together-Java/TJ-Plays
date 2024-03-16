@@ -15,6 +15,10 @@ java {
     }
 }
 
+ext {
+    chatGPTVersion = '0.18.0'
+}
+
 var outputImage = 'togetherjava.org:5001/togetherjava/tjplays:master' ?: 'latest'
 
 jib {
@@ -40,7 +44,8 @@ shadowJar {
 
 dependencies {
     implementation 'net.dv8tion:JDA:5.0.0-beta.21'
-
+    implementation "com.theokanning.openai-gpt3-java:api:$chatGPTVersion"
+    implementation "com.theokanning.openai-gpt3-java:service:$chatGPTVersion"
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
 }
 

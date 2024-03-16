@@ -4,9 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
-
 import com.togetherjava.tjplays.listeners.commands.*;
-
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
@@ -16,6 +14,7 @@ public final class Bot {
         Properties properties = readProperties(args);
 
         String botToken = properties.getProperty("BOT_TOKEN");
+        String chatGptToken = properties.getProperty("OPEN_AI_TOKEN");
 
         createJDA(botToken);
     }
