@@ -1,14 +1,14 @@
 package com.togetherjava.tjplays.services.chatgpt;
 
-
-
 import com.theokanning.openai.OpenAiHttpException;
 import com.theokanning.openai.completion.chat.ChatCompletionRequest;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.completion.chat.ChatMessageRole;
 import com.theokanning.openai.service.OpenAiService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
@@ -52,10 +52,9 @@ public class ChatGptService {
     /**
      * Creates instance of ChatGPTService
      *
-     * @param apiKey representing the chatGPT token key
+     * @param apiKey needed for token to OpenAI API.
      */
     public ChatGptService(String apiKey) {
-
         boolean keyIsDefaultDescription = apiKey.startsWith("<") && apiKey.endsWith(">");
         if (apiKey.isBlank() || keyIsDefaultDescription) {
             isDisabled = true;
@@ -64,9 +63,7 @@ public class ChatGptService {
 
         openAiService = new OpenAiService(apiKey, TIMEOUT);
 
-        ChatMessage setupMessage = new ChatMessage(ChatMessageRole.SYSTEM.value(), """
-                For code supplied for review, refer to the old code supplied rather than
-                rewriting the code. DON'T supply a corrected version of the code.\s""");
+        ChatMessage setupMessage = new ChatMessage(ChatMessageRole.SYSTEM.value(), "");
         ChatCompletionRequest systemSetupRequest = ChatCompletionRequest.builder()
                 .model(AI_MODEL)
                 .messages(List.of(setupMessage))

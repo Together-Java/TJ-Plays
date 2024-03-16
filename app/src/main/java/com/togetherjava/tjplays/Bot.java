@@ -4,7 +4,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
+
 import com.togetherjava.tjplays.listeners.commands.*;
+
+import com.togetherjava.tjplays.services.chatgpt.ChatGptService;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
@@ -14,15 +17,14 @@ public final class Bot {
         Properties properties = readProperties(args);
 
         String botToken = properties.getProperty("BOT_TOKEN");
-        String chatGptToken = properties.getProperty("OPEN_AI_TOKEN");
-
+        String botToken2 = properties.getProperty("OPEN_AI_TOKEN");
         createJDA(botToken);
     }
 
     private static Properties readProperties(String... args) throws IOException {
         Properties properties = new Properties();
 
-        String configPath = args.length == 0 ? "bot-config.properties" : args[0];
+        String configPath = args.length == 0 ? "app/src/bot-config.properties" : args[0];
         properties.load(new FileInputStream(configPath));
 
         return properties;
