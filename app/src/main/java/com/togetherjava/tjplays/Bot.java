@@ -1,39 +1,25 @@
 package com.togetherjava.tjplays;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
-import java.util.Properties;
-
 import com.togetherjava.tjplays.listeners.commands.*;
 
-import com.togetherjava.tjplays.services.chatgpt.ChatGptService;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 public final class Bot {
     public static void main(String[] args) throws IOException {
-        Properties properties = readProperties(args);
+        Config config = Config.readConfig(args.length == 0 ? null : Path.of(args[0]));
 
-        String botToken = properties.getProperty("BOT_TOKEN");
-        String botToken2 = properties.getProperty("OPEN_AI_TOKEN");
-        createJDA(botToken);
+        createBot(config);
     }
 
-    private static Properties readProperties(String... args) throws IOException {
-        Properties properties = new Properties();
+    private static JDA createBot(Config config) {
+        JDA jda = JDABuilder.createDefault(config.botToken()).build();
 
-        String configPath = args.length == 0 ? "bot-config.properties" : args[0];
-        properties.load(new FileInputStream(configPath));
-
-        return properties;
-    }
-
-    private static JDA createJDA(String botToken) {
-        JDA jda = JDABuilder.createDefault(botToken).build();
-
-        List<SlashCommand> commands = getCommands();
+        List<SlashCommand> commands = getCommands(config);
         commands.forEach(command -> jda.addEventListener(command));
 
         List<SlashCommandData> commandDatas = commands.stream()
@@ -45,7 +31,7 @@ public final class Bot {
         return jda;
     }
 
-    private static List<SlashCommand> getCommands() {
+    private static List<SlashCommand> getCommands(Config config) {
         return List.of(
             new PingCommand(),
             new Game2048Command()
