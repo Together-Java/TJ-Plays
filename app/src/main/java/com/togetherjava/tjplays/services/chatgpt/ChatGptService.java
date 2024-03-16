@@ -9,8 +9,6 @@ import com.theokanning.openai.completion.chat.ChatMessageRole;
 import com.theokanning.openai.service.OpenAiService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
@@ -18,7 +16,6 @@ import java.util.Optional;
 
 /**
  * Service used to communicate to OpenAI API to generate responses.
- * This class is from the TJ-Bot repository: <a href="https://github.com/Together-Java/TJ-Bot">...</a>
  */
 public class ChatGptService {
     private static final Logger logger = LoggerFactory.getLogger(ChatGptService.class);
@@ -89,11 +86,11 @@ public class ChatGptService {
      * @param question The question being asked of ChatGPT. Max is {@value MAX_TOKENS} tokens.
      * @param context The category of asked question, to set the context(eg. Java, Database, Other
      *        etc).
-     * @return partitioned response from ChatGPT as a String array.
+     * @return response from ChatGPT as a String.
      * @see <a href="https://platform.openai.com/docs/guides/chat/managing-tokens">ChatGPT
      *      Tokens</a>.
      */
-    public Optional<String[]> ask(String question, String context) {
+    public Optional<String> ask(String question, String context) {
         if (isDisabled) {
             return Optional.empty();
         }
@@ -123,7 +120,7 @@ public class ChatGptService {
                 return Optional.empty();
             }
 
-            return Optional.of(AIResponseParser.parse(response));
+            return Optional.of(response);
         } catch (OpenAiHttpException openAiHttpException) {
             logger.warn(
                     "There was an error using the OpenAI API: {} Code: {} Type: {} Status Code: {}",
