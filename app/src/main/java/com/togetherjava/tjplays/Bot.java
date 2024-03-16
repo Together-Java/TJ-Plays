@@ -16,6 +16,7 @@ public final class Bot {
         Properties properties = readProperties(args);
 
         String botToken = properties.getProperty("BOT_TOKEN");
+        String chatGptToken = properties.getProperty("OPEN_AI_TOKEN");
 
         createJDA(botToken);
     }
