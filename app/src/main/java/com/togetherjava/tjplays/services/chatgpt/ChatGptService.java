@@ -93,14 +93,12 @@ public class ChatGptService {
         }
 
         try {
-            String instructions = "KEEP IT CONCISE, NOT MORE THAN 280 WORDS";
-            String questionWithContext = "context: Category %s on a Java Q&A discord server. %s %s"
-                    .formatted(context, instructions, question);
-            ChatMessage chatMessage = new ChatMessage(ChatMessageRole.USER.value(),
-                    Objects.requireNonNull(questionWithContext));
+            ChatMessage chatQuestion = new ChatMessage(ChatMessageRole.USER.value(), question);
+            ChatMessage chatContext = new ChatMessage(ChatMessageRole.USER.value(), context);
+
             ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
                     .model(AI_MODEL)
-                    .messages(List.of(chatMessage))
+                    .messages(List.of(chatContext, chatQuestion))
                     .frequencyPenalty(FREQUENCY_PENALTY)
                     .temperature(TEMPERATURE)
                     .maxTokens(MAX_TOKENS)
