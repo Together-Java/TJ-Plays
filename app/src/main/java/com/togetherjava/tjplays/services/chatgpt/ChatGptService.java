@@ -18,6 +18,7 @@ import java.util.Optional;
 
 /**
  * Service used to communicate to OpenAI API to generate responses.
+ * This class is from the TJ-Bot repository: <a href="https://github.com/Together-Java/TJ-Bot">...</a>
  */
 public class ChatGptService {
     private static final Logger logger = LoggerFactory.getLogger(ChatGptService.class);

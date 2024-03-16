@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 /**
  * Represents a class to partition long text blocks into smaller blocks which work with Discord's
  * API. Initially constructed to partition text from AI text generation APIs.
+ * This class is from the TJ-Bot repository: <a href="https://github.com/Together-Java/TJ-Bot">...</a>
  */
 public class AIResponseParser {
     private AIResponseParser() {
