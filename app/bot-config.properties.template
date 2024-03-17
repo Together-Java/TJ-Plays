@@ -1,2 +1,2 @@
-BOT_TOKEN=<ENTER BOT_TOKEN>
-OPEN_AI_TOKEN=<ENTER OPEN_AI_TOKEN>
+BOT_TOKEN=<put your token here>
+OPENAI_API_KEY=<check pins in #tjbot_discussion for the key>

@@ -11,14 +11,18 @@ repositories {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(19)
+        languageVersion = JavaLanguageVersion.of(21)
     }
+}
+
+ext {
+    chatGPTVersion = '0.18.0'
 }
 
 var outputImage = 'togetherjava.org:5001/togetherjava/tjplays:master' ?: 'latest'
 
 jib {
-    from.image = 'eclipse-temurin:19'
+    from.image = 'eclipse-temurin:21'
     to {
         image = outputImage
         auth {
@@ -31,9 +35,7 @@ jib {
         setCreationTime(java.time.Instant.now().toString())
     }
 }
-ext {
-    chatGPTVersion = '0.18.0'
-}
+
 shadowJar {
     archiveBaseName.set('TJ-Plays')
     archiveClassifier.set('')
@@ -41,9 +43,14 @@ shadowJar {
 }
 
 dependencies {
-    implementation 'net.dv8tion:JDA:5.0.0-beta.3'
+    implementation 'net.dv8tion:JDA:5.0.0-beta.21'
+
     implementation "com.theokanning.openai-gpt3-java:api:$chatGPTVersion"
     implementation "com.theokanning.openai-gpt3-java:service:$chatGPTVersion"
+
+    implementation 'org.apache.logging.log4j:log4j-core:2.23.0'
+    runtimeOnly 'org.apache.logging.log4j:log4j-slf4j18-impl:2.18.0'
+
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
 }
 
@@ -53,4 +60,12 @@ application {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
 }

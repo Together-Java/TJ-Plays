@@ -5,9 +5,9 @@ import com.theokanning.openai.completion.chat.ChatCompletionRequest;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.completion.chat.ChatMessageRole;
 import com.theokanning.openai.service.OpenAiService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-//import org.togetherjava.tjbot.config.Config;
 
 import java.time.Duration;
 import java.util.List;
@@ -52,7 +52,7 @@ public class ChatGptService {
     /**
      * Creates instance of ChatGPTService
      *
-     * @param config needed for token to OpenAI API.
+     * @param apiKey needed for token to OpenAI API.
      */
     public ChatGptService(String apiKey) {
         boolean keyIsDefaultDescription = apiKey.startsWith("<") && apiKey.endsWith(">");
@@ -63,9 +63,7 @@ public class ChatGptService {
 
         openAiService = new OpenAiService(apiKey, TIMEOUT);
 
-        ChatMessage setupMessage = new ChatMessage(ChatMessageRole.SYSTEM.value(), """
-                For code supplied for review, refer to the old code supplied rather than
-                rewriting the code. DON'T supply a corrected version of the code.\s""");
+        ChatMessage setupMessage = new ChatMessage(ChatMessageRole.SYSTEM.value(), "");
         ChatCompletionRequest systemSetupRequest = ChatCompletionRequest.builder()
                 .model(AI_MODEL)
                 .messages(List.of(setupMessage))
@@ -85,24 +83,22 @@ public class ChatGptService {
      * @param question The question being asked of ChatGPT. Max is {@value MAX_TOKENS} tokens.
      * @param context The category of asked question, to set the context(eg. Java, Database, Other
      *        etc).
-     * @return partitioned response from ChatGPT as a String array.
+     * @return response from ChatGPT as a String.
      * @see <a href="https://platform.openai.com/docs/guides/chat/managing-tokens">ChatGPT
      *      Tokens</a>.
      */
-    public Optional<String[]> ask(String question, String context) {
+    public Optional<String> ask(String question, String context) {
         if (isDisabled) {
             return Optional.empty();
         }
 
         try {
-            String instructions = "KEEP IT CONCISE, NOT MORE THAN 280 WORDS";
-            String questionWithContext = "context: Category %s on a Java Q&A discord server. %s %s"
-                    .formatted(context, instructions, question);
-            ChatMessage chatMessage = new ChatMessage(ChatMessageRole.USER.value(),
-                    Objects.requireNonNull(questionWithContext));
+            ChatMessage chatQuestion = new ChatMessage(ChatMessageRole.USER.value(), question);
+            ChatMessage chatContext = new ChatMessage(ChatMessageRole.USER.value(), context);
+
             ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
                     .model(AI_MODEL)
-                    .messages(List.of(chatMessage))
+                    .messages(List.of(chatContext, chatQuestion))
                     .frequencyPenalty(FREQUENCY_PENALTY)
                     .temperature(TEMPERATURE)
                     .maxTokens(MAX_TOKENS)
@@ -111,7 +107,7 @@ public class ChatGptService {
 
             String response = openAiService.createChatCompletion(chatCompletionRequest)
                     .getChoices()
-                    .get(0)
+                    .getFirst()
                     .getMessage()
                     .getContent();
 
@@ -119,7 +115,7 @@ public class ChatGptService {
                 return Optional.empty();
             }
 
-            return Optional.of(AIResponseParser.parse(response));
+            return Optional.of(response);
         } catch (OpenAiHttpException openAiHttpException) {
             logger.warn(
                     "There was an error using the OpenAI API: {} Code: {} Type: {} Status Code: {}",
