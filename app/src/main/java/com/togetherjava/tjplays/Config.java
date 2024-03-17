@@ -9,7 +9,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final record Config(
-    @NotNull String botToken
+    @NotNull String botToken,
+    @NotNull String openAIApiKey
 ) {
     private static final String DEFAULT_PATH = "bot-config.properties";
 
@@ -20,7 +21,8 @@ public final record Config(
         properties.load(new FileInputStream(configPath.toString()));
 
         return new Config(
-            properties.getProperty("BOT_TOKEN")
+            properties.getProperty("BOT_TOKEN"),
+            properties.getProperty("OPENAI_API_KEY")
         );
     }
 }
