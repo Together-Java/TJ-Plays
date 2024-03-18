@@ -60,7 +60,8 @@ public final class Game2048Command extends SlashCommand {
 
         if (buttonId.contains("delete")) {
             sessionsCache.invalidate(event.getMessageId());
-            event.getMessage().delete().queue();
+            event.deferEdit().queue();
+            event.getHook().deleteOriginal().queue();
             return;
         }
 
