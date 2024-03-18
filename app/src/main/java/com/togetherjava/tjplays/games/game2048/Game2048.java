@@ -8,13 +8,17 @@ import java.util.function.BiFunction;
 public final class Game2048 {
     public static final int ROWS = 4;
     public static final int COLUMNS = 4;
+    private static final Random random = new Random();
 
-    private static Random random = new Random();
-    private int[][] board = new int[ROWS][COLUMNS];
-    private GameState state = GameState.ONGOING;
-    private int score = 0;
+    private int[][] board;
+    private GameState state;
+    private int score;
 
     public Game2048() {
+        board = new int[ROWS][COLUMNS];
+        state = GameState.ONGOING;
+        score = 0;
+
         for (int i = 0; i < 2; i++) spawnNewBlock();
     }
 

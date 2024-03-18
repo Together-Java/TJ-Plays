@@ -1,9 +1,9 @@
 package com.togetherjava.tjplays.listeners.commands;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.togetherjava.tjplays.games.game2048.Game2048;
 import com.togetherjava.tjplays.games.game2048.GameState;
 import com.togetherjava.tjplays.games.game2048.Move;
@@ -28,10 +28,14 @@ public final class Game2048Command extends SlashCommand {
     private static final Emoji DOWN_EMOJI = Emoji.fromUnicode("⬇️");
     private static final Emoji RIGHT_EMOJI = Emoji.fromUnicode("➡️");
 
-    private Map<String, Renderer2048> sessions = new HashMap<>();
+    private final Cache<String, Renderer2048> sessionsCache;
 
     public Game2048Command() {
         super(Commands.slash(COMMAND_NAME, "Game 2048"));
+
+        sessionsCache = Caffeine.newBuilder()
+            .expireAfterWrite(1, TimeUnit.DAYS)
+            .build();
     }
 
     @Override
@@ -39,10 +43,9 @@ public final class Game2048Command extends SlashCommand {
         Renderer2048 gameRenderer = new Renderer2048(new Game2048());
 
         event.reply(gameMessage(gameRenderer, event.getUser().getId()))
-            .queue(hook -> {
-                hook.retrieveOriginal().queue(message -> sessions.put(message.getId(), gameRenderer));
-                hook.retrieveOriginal().queueAfter(10, TimeUnit.HOURS, message -> sessions.remove(message.getId()));
-            });
+            .flatMap(hook -> hook.retrieveOriginal())
+            .onSuccess(message -> sessionsCache.put(message.getId(), gameRenderer))
+            .queue();
     }
 
     @Override
@@ -55,24 +58,27 @@ public final class Game2048Command extends SlashCommand {
             return;
         }
 
-        if (buttonId.contains("reset"))
-            sessions.get(event.getMessageId()).setGame(new Game2048());
-        else if (buttonId.contains("delete")) {
-            sessions.remove(event.getMessageId());
-            event.getMessage().delete().queue();
+        if (buttonId.contains("delete")) {
+            sessionsCache.invalidate(event.getMessageId());
+            event.deferEdit().queue();
+            event.getHook().deleteOriginal().queue();
             return;
         }
 
-        Move move = null;
+        Renderer2048 gameRenderer = sessionsCache.getIfPresent(event.getMessageId());
 
-        if (buttonId.contains("up")) move = Move.UP;
-        else if (buttonId.contains("down")) move = Move.DOWN;
-        else if (buttonId.contains("left")) move = Move.LEFT;
-        else if (buttonId.contains("right")) move = Move.RIGHT;
+        if (buttonId.contains("reset")) {
+            gameRenderer.setGame(new Game2048());
+        } else {
+            Move move = null;
 
-        Renderer2048 gameRenderer = sessions.get(event.getMessageId());
-        if (move != null)
+            if (buttonId.contains("up")) move = Move.UP;
+            else if (buttonId.contains("down")) move = Move.DOWN;
+            else if (buttonId.contains("left")) move = Move.LEFT;
+            else if (buttonId.contains("right")) move = Move.RIGHT;
+
             gameRenderer.getGame().move(move);
+        }
 
         event.editMessage(MessageEditData.fromCreateData(gameMessage(gameRenderer, event.getUser().getId()))).queue();
     }
