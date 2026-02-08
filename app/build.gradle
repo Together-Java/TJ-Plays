@@ -26,8 +26,8 @@ jib {
     to {
         image = outputImage
         auth {
-            username = System.getenv('ORG_REGISTRY_USER') ?: ''
-            password = System.getenv('ORG_REGISTRY_PASSWORD') ?: ''
+            username = System.getenv('REGISTRY_USER') ?: ''
+            password = System.getenv('REGISTRY_PASSWORD') ?: ''
         }
     }
     container {
