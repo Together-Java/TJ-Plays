@@ -31,7 +31,7 @@ jib {
         }
     }
     container {
-        mainClass = 'com.togetherjava.tjplays.App'
+        mainClass = 'com.togetherjava.tjplays.Bot'
         setCreationTime(java.time.Instant.now().toString())
     }
 }
