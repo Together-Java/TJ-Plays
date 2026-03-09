@@ -34,7 +34,8 @@ public final class Bot {
     private static List<SlashCommand> getCommands(Config config) {
         return List.of(
             new PingCommand(),
-            new Game2048Command()
+            new Game2048Command(),
+            new JavaQuizCommand(config.openAIApiKey())
         );
     }
 }
