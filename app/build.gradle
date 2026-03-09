@@ -42,13 +42,6 @@ shadowJar {
     archiveVersion.set('')
 }
 
-tasks.register('runQuiz', JavaExec) {
-    group = 'application'
-    description = 'Launch the javaquiz sample program'
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass.set('com.togetherjava.tjplays.games.game2048.javaquiz')
-}
-
 dependencies {
     implementation 'net.dv8tion:JDA:5.0.0-beta.21'
 

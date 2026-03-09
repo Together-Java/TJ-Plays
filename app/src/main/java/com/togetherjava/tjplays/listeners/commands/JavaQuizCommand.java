@@ -59,7 +59,9 @@ public final class JavaQuizCommand extends SlashCommand {
     @Override
     public void onButtonInteraction(ButtonInteractionEvent event) {
         String buttonId = event.getButton().getId();
-        if (buttonId == null || !buttonId.startsWith(COMMAND_NAME)) return;
+        if (buttonId == null || !buttonId.startsWith(COMMAND_NAME)) {
+            return;
+        }
 
         if (!buttonId.contains(event.getUser().getId())) {
             event.reply("This isn't your quiz!").setEphemeral(true).queue();
@@ -79,8 +81,15 @@ public final class JavaQuizCommand extends SlashCommand {
                 ? "Correct! The answer is: **" + q.getChoices().get(q.getCorrectIndex()) + "**"
                 : "Wrong! The correct answer was: **" + q.getChoices().get(q.getCorrectIndex()) + "**";
 
+        String userId = event.getUser().getId();
+
         event.editMessage(event.getMessage().getContentRaw() + "\n\n" + result)
-                .setActionRow()
+                .setActionRow(
+                    Button.primary(COMMAND_NAME + "-1-" + userId, "1").asDisabled(),
+                    Button.primary(COMMAND_NAME + "-2-" + userId, "2").asDisabled(),
+                    Button.primary(COMMAND_NAME + "-3-" + userId, "3").asDisabled(),
+                    Button.primary(COMMAND_NAME + "-4-" + userId, "4").asDisabled()
+                )
                 .queue();
     }
 }

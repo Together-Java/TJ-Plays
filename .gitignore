@@ -46,6 +46,3 @@ build
 
 # Credentials
 bot-config.properties
-
-# Local Gradle settings (machine-specific JDK path)
-gradle.properties
