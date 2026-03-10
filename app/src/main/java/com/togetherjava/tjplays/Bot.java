@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import com.togetherjava.tjplays.listeners.commands.*;
+import com.togetherjava.tjplays.trivia.TriviaManager;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -32,10 +33,12 @@ public final class Bot {
     }
 
     private static List<SlashCommand> getCommands(Config config) {
-        return List.of(
+        // Construct JavaQuizCommand with TriviaManager and ChatGptService
+        TriviaManager triviaManager = new TriviaManager(new com.togetherjava.tjplays.services.chatgpt.ChatGptService(config.openAIApiKey()));
+        return java.util.Arrays.asList(
             new PingCommand(),
             new Game2048Command(),
-            new JavaQuizCommand(config.openAIApiKey())
+            new JavaQuizCommand(triviaManager)
         );
     }
 }

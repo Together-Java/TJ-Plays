@@ -1,7 +1,7 @@
 package com.togetherjava.tjplays.listeners.commands;
 
-import com.togetherjava.tjplays.games.game2048.QuizQuestion;
-import com.togetherjava.tjplays.games.game2048.TriviaManager;
+import com.togetherjava.tjplays.trivia.QuizQuestion;
+import com.togetherjava.tjplays.trivia.TriviaManager;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -12,6 +12,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Handles the /javaquiz command, presenting Java trivia questions to users.
+ * Uses TriviaManager to fetch questions and manages user quiz state.
+ * Future contributors can extend this for more quiz features.
+ */
 public final class JavaQuizCommand extends SlashCommand {
     private static final String COMMAND_NAME = "javaquiz";
 
@@ -21,9 +26,13 @@ public final class JavaQuizCommand extends SlashCommand {
     // userId -> messageId
     private final ConcurrentHashMap<String, String> userActiveQuiz = new ConcurrentHashMap<>();
 
-    public JavaQuizCommand(String openAiKey) {
+    /**
+     * Constructs a JavaQuizCommand with a TriviaManager instance.
+     * @param triviaManager the TriviaManager to use for fetching questions
+     */
+    public JavaQuizCommand(TriviaManager triviaManager) {
         super(Commands.slash(COMMAND_NAME, "Get a random Java trivia question"));
-        this.triviaManager = new TriviaManager(openAiKey);
+        this.triviaManager = triviaManager;
     }
 
     @Override
@@ -46,14 +55,14 @@ public final class JavaQuizCommand extends SlashCommand {
         QuizQuestion quizQuestion = question.get();
         List<String> choices = quizQuestion.getChoices();
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("**Java Quiz**\n\n");
-        sb.append(quizQuestion.getQuestion()).append("\n\n");
-        for (int i = 0; i < choices.size(); i++) {
-            sb.append("`").append(i + 1).append("`) ").append(choices.get(i)).append("\n");
-        }
+        String quizContent = String.format("**Java Quiz**\n\n%s\n\n%s",
+            quizQuestion.getQuestion(),
+            java.util.stream.IntStream.range(0, choices.size())
+                .mapToObj(i -> String.format("`%d`) %s", i + 1, choices.get(i)))
+                .collect(java.util.stream.Collectors.joining("\n"))
+        );
 
-        String messageId = event.getHook().editOriginal(sb.toString())
+        String messageId = event.getHook().editOriginal(quizContent)
                 .setActionRow(
                     Button.primary(COMMAND_NAME + "-1-" + userId, "1"),
                     Button.primary(COMMAND_NAME + "-2-" + userId, "2"),

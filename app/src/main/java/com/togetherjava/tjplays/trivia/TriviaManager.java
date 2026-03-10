@@ -1,22 +1,26 @@
-package com.togetherjava.tjplays.games.game2048;
+package com.togetherjava.tjplays.trivia;
 
 import com.togetherjava.tjplays.services.chatgpt.ChatGptService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.util.Optional;
 
+/**
+ * Manages Java trivia questions using ChatGptService.
+ * Used by quiz commands to fetch questions for users.
+ * Future contributors can use this for any trivia/quiz feature.
+ */
 public class TriviaManager {
-    private final ChatGptService gpt;
+    private final ChatGptService chatGptService;
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public TriviaManager(String openAiKey) {
-        this.gpt = new ChatGptService(openAiKey);
+    public TriviaManager(ChatGptService chatGptService) {
+        this.chatGptService = chatGptService;
     }
 
     public Optional<QuizQuestion> fetchRandomQuestion() {
         String prompt = "Provide one Java trivia question as a JSON object like"
                 + " {\"question\":\"...\",\"choices\":[\"A\",\"B\",\"C\",\"D\"],\"correct\":<index>}";
-        Optional<String> raw = gpt.ask(prompt, "java quiz");
+        Optional<String> raw = chatGptService.ask(prompt, "java quiz");
         if (raw.isEmpty()) {
             return Optional.empty();
         }
