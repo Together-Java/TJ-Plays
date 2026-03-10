@@ -5,10 +5,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
+/**
+ * Represents a single quiz question for Java trivia.
+ * Used by TriviaManager and JavaQuizCommand to display questions and validate answers.
+ * Future contributors can use this for any quiz/trivia feature needing a question, choices, and answer index.
+ */
 public record QuizQuestion(
-        @JsonProperty("question") String question,
-        @JsonProperty("choices") List<String> choices,
-        @JsonProperty("correct") int correctIndex
+    @JsonProperty("question") String question,
+    @JsonProperty("choices") List<String> choices,
+    @JsonProperty("correct") int correctAnswerIndex
 ) {
     @JsonCreator
     public QuizQuestion {}
@@ -21,7 +26,10 @@ public record QuizQuestion(
         return choices;
     }
 
-    public int getCorrectIndex() {
-        return correctIndex;
+    /**
+     * Returns the index of the correct answer in the choices list.
+     */
+    public int getCorrectAnswerIndex() {
+        return correctAnswerIndex;
     }
 }

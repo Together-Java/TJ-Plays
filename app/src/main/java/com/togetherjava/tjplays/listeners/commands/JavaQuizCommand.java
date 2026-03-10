@@ -16,7 +16,10 @@ public final class JavaQuizCommand extends SlashCommand {
     private static final String COMMAND_NAME = "javaquiz";
 
     private final TriviaManager triviaManager;
+    // messageId -> QuizQuestion
     private final ConcurrentHashMap<String, QuizQuestion> activeQuestions = new ConcurrentHashMap<>();
+    // userId -> messageId
+    private final ConcurrentHashMap<String, String> userActiveQuiz = new ConcurrentHashMap<>();
 
     public JavaQuizCommand(String openAiKey) {
         super(Commands.slash(COMMAND_NAME, "Get a random Java trivia question"));
@@ -25,6 +28,13 @@ public final class JavaQuizCommand extends SlashCommand {
 
     @Override
     public void onSlashCommand(SlashCommandInteractionEvent event) {
+        String userId = event.getUser().getId();
+        // Prevent new quiz if user has an active one
+        if (userActiveQuiz.containsKey(userId)) {
+            event.reply("You already have an active quiz. Please answer it before starting a new one.").setEphemeral(true).queue();
+            return;
+        }
+
         event.deferReply().queue();
 
         Optional<QuizQuestion> question = triviaManager.fetchRandomQuestion();
@@ -33,27 +43,28 @@ public final class JavaQuizCommand extends SlashCommand {
             return;
         }
 
-        QuizQuestion q = question.get();
-        List<String> choices = q.getChoices();
+        QuizQuestion quizQuestion = question.get();
+        List<String> choices = quizQuestion.getChoices();
 
         StringBuilder sb = new StringBuilder();
         sb.append("**Java Quiz**\n\n");
-        sb.append(q.getQuestion()).append("\n\n");
+        sb.append(quizQuestion.getQuestion()).append("\n\n");
         for (int i = 0; i < choices.size(); i++) {
-            sb.append("`").append(i + 1).append(")` ").append(choices.get(i)).append("\n");
+            sb.append("`").append(i + 1).append("`) ").append(choices.get(i)).append("\n");
         }
 
         String messageId = event.getHook().editOriginal(sb.toString())
                 .setActionRow(
-                    Button.primary(COMMAND_NAME + "-1-" + event.getUser().getId(), "1"),
-                    Button.primary(COMMAND_NAME + "-2-" + event.getUser().getId(), "2"),
-                    Button.primary(COMMAND_NAME + "-3-" + event.getUser().getId(), "3"),
-                    Button.primary(COMMAND_NAME + "-4-" + event.getUser().getId(), "4")
+                    Button.primary(COMMAND_NAME + "-1-" + userId, "1"),
+                    Button.primary(COMMAND_NAME + "-2-" + userId, "2"),
+                    Button.primary(COMMAND_NAME + "-3-" + userId, "3"),
+                    Button.primary(COMMAND_NAME + "-4-" + userId, "4")
                 )
                 .complete()
                 .getId();
 
-        activeQuestions.put(messageId, q);
+        activeQuestions.put(messageId, quizQuestion);
+        userActiveQuiz.put(userId, messageId);
     }
 
     @Override
@@ -68,20 +79,22 @@ public final class JavaQuizCommand extends SlashCommand {
             return;
         }
 
-        QuizQuestion q = activeQuestions.remove(event.getMessageId());
-        if (q == null) {
+        String userId = event.getUser().getId();
+        QuizQuestion quizQuestion = activeQuestions.remove(event.getMessageId());
+        // Remove user's active quiz
+        userActiveQuiz.remove(userId);
+        if (quizQuestion == null) {
             event.reply("This quiz has already been answered.").setEphemeral(true).queue();
             return;
         }
 
         int chosen = Character.getNumericValue(buttonId.charAt(COMMAND_NAME.length() + 1)) - 1;
-        boolean correct = chosen == q.getCorrectIndex();
+        boolean correct = chosen == quizQuestion.getCorrectAnswerIndex();
 
+        String correctAnswer = quizQuestion.getChoices().get(quizQuestion.getCorrectAnswerIndex());
         String result = correct
-                ? "Correct! The answer is: **" + q.getChoices().get(q.getCorrectIndex()) + "**"
-                : "Wrong! The correct answer was: **" + q.getChoices().get(q.getCorrectIndex()) + "**";
-
-        String userId = event.getUser().getId();
+            ? "Correct! The answer is: **" + correctAnswer + "**"
+            : "Wrong! The correct answer was: **" + correctAnswer + "**";
 
         event.editMessage(event.getMessage().getContentRaw() + "\n\n" + result)
                 .setActionRow(
